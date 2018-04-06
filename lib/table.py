@@ -1,5 +1,5 @@
 import csv
-from collections import defaultdict
+from collections import defaultdict,Counter
 
 class Table(object):
 # Structure as Map of Map {colname: [row_index] }
@@ -40,6 +40,17 @@ class Table(object):
     def drop(self,key):
         if key in self.store:
             del self.store[key]
+
+    def value_counts(self, index=None, axis=None):
+        if axis is None:
+            flat_list = [y for x in self.row_store for y in x]
+            return dict(Counter(flat_list))
+        elif axis == 0:
+            assert isinstance(index, int)
+            return dict(Counter(self.column_store))
+        elif axis == 1:
+            assert isinstance(index, int)
+            return dict(Counter(self.row_store))
 
     def from_csv(self, csv_file, has_header=False, missing_char = '?'):
         csvfile = open(csv_file, newline='')
