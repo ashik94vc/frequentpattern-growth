@@ -31,6 +31,11 @@ class Tree(object):
         else:
             return False
 
+    def isLeafNode(self):
+        if len(self.children) == 0:
+            return True
+        return False
+
     def addChild(self, child):
         assert isinstance(child,Tree), "Child should be of type %r" % type(self)
         child.parent = self
@@ -55,6 +60,13 @@ class Tree(object):
             if chi == child:
                 return idx
         return -1
+
+    def isSinglePath(self):
+        if self.isLeafNode():
+            return True:
+        if len(self.children) > 1:
+            return False
+        return self.children[0].isSinglePath()
 
     def mergeTree(self, tree):
         if self == tree:
