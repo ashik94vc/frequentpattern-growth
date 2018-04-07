@@ -2,9 +2,10 @@ from ds.table import Table
 from ds.tree import Tree
 from pptree import print_tree
 from collections import defaultdict
-class FPTree(object):
+class FPTree(Tree):
 
     def __init__(self,dataframe, min_support):
+        super().__init__()
         self.df = dataframe
         self.min_support = min_support
         support_table = self.df.value_counts()
@@ -18,7 +19,6 @@ class FPTree(object):
             # new_row = self.sort_row(filtered_table,row)
             header_table[idx] = new_row
         self.header = header_table
-        self.fptree = Tree()
         self.sorted = filtered_table
 
         for row in header_table:
@@ -27,7 +27,22 @@ class FPTree(object):
             for value in row:
                 node = Tree(value,1)
                 row_tree = row_tree.addChild(node)
-            self.fptree.mergeTree(head)
+            self.mergeTree(head)
+
+    def performFPGrowth(self, item):
+        if self.isSinglePath():
+            patterns = {}
+            nodes = self.getAllNodes()
+            min_support = min([self.sorted[x] for x in nodes])
+            for i in range(1, len(nodes)+1):
+                for pattern in itertools.combination(nodes, i):
+                    if item is not None:
+                        pattern += item
+                    patterns[tuple(pattern)] = min_support
+            if item is not None:
+                patterns[tuple(item)] = min_support
+            return patterns
+
 
     # def sort_row(self, filtered_table, row):
     #     filter_group = defaultdict(list)

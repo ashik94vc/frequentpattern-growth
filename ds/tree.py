@@ -61,9 +61,19 @@ class Tree(object):
                 return idx
         return -1
 
+    def getAllNodes(self):
+        assert self.isSinglePath(), "Works only for single path trees"
+        tree = self
+        nodes = []
+        while not tree.isLeafNode():
+            if tree.item is not None:
+                nodes.append((tree.item, tree.support))
+            tree = tree.children[0]
+        return nodes
+
     def isSinglePath(self):
         if self.isLeafNode():
-            return True:
+            return True
         if len(self.children) > 1:
             return False
         return self.children[0].isSinglePath()
