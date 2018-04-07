@@ -28,7 +28,7 @@ class Table(object):
         return self.store[key]
 
     def __repr__(self):
-        rep_mat = [self.column_header] +[" "]*len(self.column_header)+ self.row_store
+        rep_mat = [self.column_header] +[[" "]*len(self.column_header)]+ self.row_store
         rep_str = "\tTable\t"
         for row in rep_mat:
             rep_str = rep_str + "\n" + "\t".join(map(str,row))
@@ -43,7 +43,7 @@ class Table(object):
 
     def value_counts(self, index=None, axis=None):
         if axis is None:
-            flat_list = [y for x in self.row_store for y in x]
+            flat_list = [y for x in self.row_store for y in x if y != None]
             return dict(Counter(flat_list))
         elif axis == 0:
             assert isinstance(index, int)
@@ -63,3 +63,4 @@ class Table(object):
             header = [str(x) for x in range(len(row))]
             for idx,val in enumerate(row):
                 self.store[header[idx]].append(val)
+        return self

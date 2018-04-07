@@ -1,11 +1,10 @@
-from node import Node
 class Tree(object):
 
     def __init__(self, item=None, support=None):
         self.item = item
         self.support = support
         self.parent = None
-        self.children = list()
+        self.children = []
 
     def __contains__(self,other):
         for child in self.getChildren():
@@ -13,11 +12,17 @@ class Tree(object):
                 return True
         return False
 
-    def __repr__(self, level=0):
-        ret = "\t"*level+str(self.item)+"\n"
-        for child in self.children:
-            ret += child.__repr__(level+1)
-        return ret
+    def __str__(self):
+        return str(self.item)+":"+str(self.support)
+
+    # def __repr__(self, level=0):
+    #     ret = "\t"*level+str(self.item)+"\n"
+    #     for child in self.children:
+    #         ret += child.__repr__(level+1)
+    #     return ret
+
+    def __hash__(self):
+        return hash(self.item)
 
     def __eq__(self, other):
         assert isinstance(other,Tree), "Can only compare with objects of same type"
