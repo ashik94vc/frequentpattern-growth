@@ -1,5 +1,6 @@
 from ds.table import Table
 from ds.tree import Tree
+from ds.header_table import HeaderTable
 from pptree import print_tree
 from collections import defaultdict
 class FPTree(Tree):
@@ -20,14 +21,17 @@ class FPTree(Tree):
             header_table[idx] = new_row
         self.header = header_table
         self.sorted = filtered_table
-
+        self.header_table = HeaderTable()
         for row in header_table:
             row_tree = Tree()
             head = row_tree
             for value in row:
                 node = Tree(value,1)
                 row_tree = row_tree.addChild(node)
-            self.mergeTree(head)
+            self.mergeTree(head,self.header_table)
+
+    # def constructHeaderTable(self,sorted):
+
 
     def performFPGrowth(self, item):
         if self.isSinglePath():
@@ -42,6 +46,11 @@ class FPTree(Tree):
             if item is not None:
                 patterns[tuple(item)] = min_support
             return patterns
+        else:
+            if self.item is not None:
+                patterns = {}
+                # for item in self.filtered_values:
+
 
 
     # def sort_row(self, filtered_table, row):

@@ -1,3 +1,4 @@
+from ds.header_table import Node
 class Tree(object):
 
     def __init__(self, item=None, support=None):
@@ -78,13 +79,21 @@ class Tree(object):
             return False
         return self.children[0].isSinglePath()
 
-    def mergeTree(self, tree):
+    def mergeTree(self, tree, header_table):
         if self == tree:
             for child in tree.children:
                 if child in self:
                     id = self.childIndex(child)
                     self_child = self.getChild(id)
+                    if child.item not in header_table:
+                        header_table[child.item] = Node(child, None)
+                    else:
+                        header_table[child.item].modify(Node(self_child,None),child)
                     self_child.support += child.support
-                    self_child.mergeTree(child)
+                    self_child.mergeTree(child,header_table)
                 else:
+                    if child.item not in header_table:
+                        header_table[child.item] = Node(child, None)
+                    else:
+                        header_table[child.item].append(Node(child,None))
                     self.addChild(child)

@@ -9,4 +9,5 @@ fptree = FPTree(data,min_support=3)
 
 print(fptree.header)
 print(fptree.sorted)
+print(fptree.header_table)
 print_tree(fptree)
