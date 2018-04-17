@@ -40,15 +40,45 @@ class FPTree(Tree):
             min_support = min([self.sorted[x] for x in nodes])
             for i in range(1, len(nodes)+1):
                 for pattern in itertools.combination(nodes, i):
-                    if item is not None:
-                        pattern += item
+                    # if item is not None:
+                    #     pattern += item
                     patterns[tuple(pattern)] = min_support
-            if item is not None:
-                patterns[tuple(item)] = min_support
+            # if item is not None:
+            #     patterns[tuple(item)] = min_support
             return patterns
         else:
-            if self.item is not None:
+            mine_order = reversed(self.sorted.keys())
+            for item in mine_order:
+                suffixes = []
                 patterns = {}
+                node = self.header_table[item]
+                while node is not None:
+                    suffixes.append(node.value)
+                    node = node.link
+
+                for suffix in suffixes:
+                    frequency = suffix.support
+                    conditional_pattern_base = []
+                    parent = suffix.parent
+
+                    while parent.parent is not None:
+                        conditional_pattern_base.append(parent.value)
+                        parent = parent.parent
+
+                    #Generating Conditional Pattern Tree here..
+                    conditional_tree = Tree()
+                    for cpb in conditional_pattern_base:
+                        single_tree = Tree()
+                        head = single_tree
+                        for entry in cpb:
+                            node = Tree(*entry)
+                            single_tree = single_tree.addChild(node)
+                        conditional_tree.mergeTree(head)
+
+                    if conditional_tree.item is not None:
+
+
+
                 # for item in self.filtered_values:
 
 

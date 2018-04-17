@@ -22,6 +22,10 @@ class Tree(object):
     #         ret += child.__repr__(level+1)
     #     return ret
 
+    @property
+    def value(self):
+        return (self.item,self.support)
+
     def __hash__(self):
         return hash(self.item)
 
@@ -79,21 +83,30 @@ class Tree(object):
             return False
         return self.children[0].isSinglePath()
 
-    def mergeTree(self, tree, header_table):
+    #Prunes tree by removing items which have support less than the thresold
+    def pruneTree(self, thresold):
+        #TODO: Implement this method
+        #NOTE: The tree is present in self. You can find the childrens of tree using self.children
+        #NOTE: self.children returns a list of tree nodes and it's recursive
+        
+
+    def mergeTree(self, tree, header_table=None):
         if self == tree:
             for child in tree.children:
                 if child in self:
                     id = self.childIndex(child)
                     self_child = self.getChild(id)
-                    if child.item not in header_table:
-                        header_table[child.item] = Node(child, None)
-                    else:
-                        header_table[child.item].modify(Node(self_child,None),child)
+                    if header_table is not None:
+                        if child.item not in header_table:
+                            header_table[child.item] = Node(child, None)
+                        else:
+                            header_table[child.item].modify(Node(self_child,None),child)
                     self_child.support += child.support
                     self_child.mergeTree(child,header_table)
                 else:
-                    if child.item not in header_table:
-                        header_table[child.item] = Node(child, None)
-                    else:
-                        header_table[child.item].append(Node(child,None))
+                    if header_table is not None:
+                        if child.item not in header_table:
+                            header_table[child.item] = Node(child, None)
+                        else:
+                            header_table[child.item].modify(Node(self_child,None),child)
                     self.addChild(child)
