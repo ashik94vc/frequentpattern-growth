@@ -1,0 +1,3 @@
+[DEFAULT]
+separator = ","
+minimum_support = 100

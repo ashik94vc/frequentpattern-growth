@@ -52,9 +52,9 @@ class Table(object):
             assert isinstance(index, int)
             return dict(Counter(self.row_store))
 
-    def from_csv(self, csv_file, has_header=False, missing_char = '?'):
+    def from_csv(self, csv_file, delimiter, has_header=False, missing_char = '?'):
         csvfile = open(csv_file, newline='')
-        csvreader = csv.reader(csvfile)
+        csvreader = csv.reader(csvfile,delimiter=delimiter)
         header = list()
         if has_header:
             header = csvreader.next()

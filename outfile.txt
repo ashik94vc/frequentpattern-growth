@@ -1,0 +1,7 @@
+c
+f
+a
+f,c
+f,a
+c,a
+f,c,a
