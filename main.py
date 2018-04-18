@@ -7,10 +7,5 @@ data = Table().from_csv(sys.argv[1],missing_char="")
 
 fptree = FPTree(data,min_support=3)
 
-print(data)
-print(fptree.header)
-print(fptree.sorted)
-print(fptree.header_table)
-print_tree(fptree)
-fptree.performFPGrowth(None)
-print(fptree.conditional_pattern_base)
+fptree.performFPGrowth()
+print(fptree.patterns)

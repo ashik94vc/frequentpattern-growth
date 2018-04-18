@@ -1,5 +1,8 @@
 from ds.header_table import Node
 from pptree import print_tree
+from collections import Counter
+from copy import deepcopy
+
 class Tree(object):
 
     def __init__(self, item=None, support=None):
@@ -114,9 +117,9 @@ class Tree(object):
                     if header_table is not None:
                         if child.item not in header_table:
                             header_table[child.item] = Node(child, None)
-                        else:
-                            header_table[child.item].modify(Node(self_child,None),child)
-                    self_child.support += child.support
+                        # else:
+                        #     header_table[child.item].modify(Node(self_child,None),child)
+                    self_child.support += 1
                     self_child.mergeTree(child,header_table,recur=True)
                 else:
                     if header_table is not None:

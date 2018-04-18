@@ -11,7 +11,6 @@ class Node(object):
         node.link = new_node
 
     def modify(self,new_node,child):
-        print("Modify Called")
         node = self
         while node.link is not None:
             if node.value == new_node.value:
