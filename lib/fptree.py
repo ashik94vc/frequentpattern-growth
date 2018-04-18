@@ -2,7 +2,7 @@ from ds.table import Table
 from ds.tree import Tree
 from ds.header_table import HeaderTable
 from pptree import print_tree
-from collections import defaultdict
+from collections import defaultdict,Counter
 class FPTree(Tree):
 
     def __init__(self,dataframe, min_support):
@@ -21,6 +21,7 @@ class FPTree(Tree):
             header_table[idx] = new_row
         self.header = header_table
         self.sorted = filtered_table
+        self.conditional_pattern_base = []
         self.header_table = HeaderTable()
         for row in header_table:
             row_tree = Tree()
@@ -33,7 +34,7 @@ class FPTree(Tree):
     # def constructHeaderTable(self,sorted):
 
 
-    def performFPGrowth(self, item):
+    def performFPGrowth(self, growth_item=[]):
         if self.isSinglePath():
             patterns = {}
             nodes = self.getAllNodes()
@@ -47,36 +48,56 @@ class FPTree(Tree):
             #     patterns[tuple(item)] = min_support
             return patterns
         else:
-            mine_order = reversed(self.sorted.keys())
+            mine_order = reversed(list(self.sorted.keys()))
+            patterns = []
             for item in mine_order:
                 suffixes = []
-                patterns = {}
+                patterns.append(item)
+                patterns.extend(growth_item)
+                conditional_pattern_base = []
                 node = self.header_table[item]
                 while node is not None:
                     suffixes.append(node.value)
                     node = node.link
-
                 for suffix in suffixes:
                     frequency = suffix.support
-                    conditional_pattern_base = []
                     parent = suffix.parent
-
+                    path = []
                     while parent.parent is not None:
-                        conditional_pattern_base.append(parent.value)
+                        path.append(parent.item)
                         parent = parent.parent
-
+                    for i in range(frequency):
+                        conditional_pattern_base.append(path)
+                    self.conditional_pattern_base = conditional_pattern_base
+                    #Removing items based on thresold before creating tree
                     #Generating Conditional Pattern Tree here..
-                    conditional_tree = Tree()
-                    for cpb in conditional_pattern_base:
-                        single_tree = Tree()
-                        head = single_tree
-                        for entry in cpb:
-                            node = Tree(*entry)
-                            single_tree = single_tree.addChild(node)
-                        conditional_tree.mergeTree(head)
+                print(conditional_pattern_base)
+                conditional_helper = Counter()
+                for cond in conditional_pattern_base:
+                    for val in cond:
+                        conditional_helper[val] += 1
+                print(conditional_helper)
+                # conditional_pattern_base = [x for x in list(map(lambda x: \
+                #                            list(filter(lambda y: conditional_helper[y] > self.min_support, x)),conditional_pattern_base))\
+                #                            if x != []]
+                for i in range(len(conditional_pattern_base)):
+                    cpb = conditional_pattern_base.pop(0)
+                    cpb = list(filter(lambda x: conditional_helper[x] >= self.min_support, cpb))
+                    if cpb != []:
+                        conditional_pattern_base.append(cpb)
 
-                    if conditional_tree.item is not None:
+                print(list(conditional_pattern_base), )
+                conditional_tree = FPTree()
+                head = Tree()
+                for cpb in conditional_pattern_base:
+                    single_tree = Tree()
+                    head = single_tree
+                    node = Tree(cpb)
+                    single_tree = single_tree.addChild(node)
+                conditional_tree.mergeTree(head)
 
+                if conditional_tree.item is not None:
+                    conditional_tree.performFPGrowth()
 
 
                 # for item in self.filtered_values:

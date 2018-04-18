@@ -1,4 +1,5 @@
 from ds.header_table import Node
+from pptree import print_tree
 class Tree(object):
 
     def __init__(self, item=None, support=None):
@@ -13,7 +14,7 @@ class Tree(object):
                 return True
         return False
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.item)+":"+str(self.support)
 
     # def __repr__(self, level=0):
@@ -66,14 +67,21 @@ class Tree(object):
                 return idx
         return -1
 
-    def getAllNodes(self):
+    def getAllNodes(self,aslink=False):
         assert self.isSinglePath(), "Works only for single path trees"
         tree = self
         nodes = []
         while not tree.isLeafNode():
             if tree.item is not None:
-                nodes.append((tree.item, tree.support))
+                if aslink:
+                    nodes.append(tree)
+                else:
+                    nodes.append((tree.item, tree.support))
             tree = tree.children[0]
+        if aslink:
+            nodes.append(tree)
+        else:
+            nodes.append((tree.item, tree.support))
         return nodes
 
     def isSinglePath(self):
@@ -88,9 +96,16 @@ class Tree(object):
         #TODO: Implement this method
         #NOTE: The tree is present in self. You can find the childrens of tree using self.children
         #NOTE: self.children returns a list of tree nodes and it's recursive
-        
+        children = self.children
+        idx = 0
+        while idx < len(children):
+            child = children[idx]
+            if child.support < thresold:
+                children.extend(child.children)
+                children.remove(child)
+            idx += 1
 
-    def mergeTree(self, tree, header_table=None):
+    def mergeTree(self, tree, header_table=None,recur=False):
         if self == tree:
             for child in tree.children:
                 if child in self:
@@ -102,11 +117,16 @@ class Tree(object):
                         else:
                             header_table[child.item].modify(Node(self_child,None),child)
                     self_child.support += child.support
-                    self_child.mergeTree(child,header_table)
+                    self_child.mergeTree(child,header_table,recur=True)
                 else:
                     if header_table is not None:
-                        if child.item not in header_table:
-                            header_table[child.item] = Node(child, None)
-                        else:
-                            header_table[child.item].modify(Node(self_child,None),child)
+                        node = tree
+                        nodes = tree.getAllNodes(aslink=True)
+                        if recur:
+                            nodes.pop(0)
+                        for node in nodes:
+                            if node.item not in header_table:
+                                header_table[node.item] = Node(node, None)
+                            else:
+                                header_table[node.item].append(Node(node,None))
                     self.addChild(child)

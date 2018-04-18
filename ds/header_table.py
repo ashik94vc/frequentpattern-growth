@@ -9,13 +9,16 @@ class Node(object):
         while node.link is not None:
             node = node.link
         node.link = new_node
+
     def modify(self,new_node,child):
+        print("Modify Called")
         node = self
         while node.link is not None:
             if node.value == new_node.value:
-                node.value.support += child.support
+                node.value.support += 1
                 break
             node = node.link
+
     def __str__(self):
         pattern = "({0!s}:{0!s})->"
         if self.value is not None:
