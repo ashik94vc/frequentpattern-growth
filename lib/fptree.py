@@ -40,17 +40,18 @@ class FPTree(Tree):
         if tree is None:
             tree = self
         if tree.isSinglePath():
-            patterns = {}
+            patterns = []
             nodes = tree.getAllNodes()
             min_support = min([self.sorted[x[0]] for x in nodes])
+            node_map = list(map(lambda x: x[0], nodes))
             for i in range(1, len(nodes)+1):
-                for pattern in itertools.combinations(nodes, i):
+                for pattern in itertools.combinations(node_map, i):
                     # if item is not None:
                     #     pattern += item
-                    patterns[tuple(pattern)] = min_support
+                    if list(pattern) not in self.patterns:
+                        self.patterns.append(list(pattern))
             # if item is not None:
             #     patterns[tuple(item)] = min_support
-            self.patterns.append(patterns)
         else:
             mine_order = reversed(list(self.sorted.keys()))
             patterns = []
@@ -88,9 +89,9 @@ class FPTree(Tree):
                         conditional_pattern_base.append(cpb)
                 conditional_tree = Tree()
                 for cpb in conditional_pattern_base:
-                    for value in cpb:
-                        single_tree = Tree()
-                        head = single_tree
+                    single_tree = Tree()
+                    head = single_tree
+                    for value in cpb[::-1]:
                         node = Tree(value,1)
                         single_tree = single_tree.addChild(node)
                     conditional_tree.mergeTree(head)

@@ -87,26 +87,24 @@ class Tree(object):
             nodes.append((tree.item, tree.support))
         return nodes
 
+    def getAllNodeValues(self):
+        assert self.isSinglePath(), "Works only for single path trees"
+        tree = self
+        nodes = []
+        while not tree.isLeafNode():
+            if tree.item is not None:
+                nodes.append(tree.item)
+            tree = tree.children[0]
+        nodes.append(tree.item)
+        return nodes
+
+
     def isSinglePath(self):
         if self.isLeafNode():
             return True
         if len(self.children) > 1:
             return False
         return self.children[0].isSinglePath()
-
-    #Prunes tree by removing items which have support less than the thresold
-    def pruneTree(self, thresold):
-        #TODO: Implement this method
-        #NOTE: The tree is present in self. You can find the childrens of tree using self.children
-        #NOTE: self.children returns a list of tree nodes and it's recursive
-        children = self.children
-        idx = 0
-        while idx < len(children):
-            child = children[idx]
-            if child.support < thresold:
-                children.extend(child.children)
-                children.remove(child)
-            idx += 1
 
     def mergeTree(self, tree, header_table=None,recur=False):
         if self == tree:
