@@ -5,6 +5,7 @@ from ds.tree import Tree
 from ds.header_table import HeaderTable
 from pptree import print_tree
 from collections import defaultdict,Counter
+from functools import reduce
 class FPTree(Tree):
 
     def __init__(self,dataframe, min_support):
@@ -13,9 +14,11 @@ class FPTree(Tree):
         self.min_support = min_support
         self.patterns = []
         support_table = self.df.value_counts()
+        print(support_table)
         filtered_table = {k:v for k,v in support_table.items() if v >= self.min_support}
         filtered_table = dict(sorted(filtered_table.items(),key=lambda x:x[1], reverse=True))
         filtered_values = list(filtered_table.keys())
+        self.avg_support = reduce(lambda x,y: int(x)+int(y),list(support_table.values()))/len(support_table)
         header_table = self.df.row_store
         for idx,row in enumerate(header_table):
             new_row = list(filter(lambda x: x in filtered_values, row))

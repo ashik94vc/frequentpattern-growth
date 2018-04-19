@@ -3,6 +3,14 @@ from lib import FPTree
 import sys
 from pptree import print_tree
 from configparser import ConfigParser
+from memory_profiler import memory_usage
+import time
+
+fptree = None
+
+def memory_constructor(data, minimum_support):
+    global fptree
+    fptree = FPTree(data,min_support=minimum_support)
 
 config = ConfigParser()
 config.read('config/fpconfig.rc')
@@ -34,11 +42,17 @@ if len(sys.argv) > 3:
     if sys.argv[3] == "-v":
         flag_verbose = True
 
+start_time = time.time()
+
 data = Table().from_csv(sys.argv[1],separator,missing_char="")
 
-fptree = FPTree(data,min_support=minimum_support)
+mem_usage = memory_usage((memory_constructor, (data, minimum_support)))
+
+
+print("Mean count of items: " + str(fptree.avg_support))
 
 fptree.performFPGrowth()
+# fptree.performFPGrowth()
 
 out_file_name = sys.argv[2]
 
@@ -49,3 +63,9 @@ for pattern in fptree.patterns:
         print(",".join(pattern))
     file.write(",".join(pattern)+"\n")
 file.close()
+
+elapsed_time = time.time() - start_time
+
+
+print("Elapsed Time: "+str(elapsed_time))
+print("Max Memory Used: "+str(max(mem_usage)))
