@@ -6,36 +6,42 @@ from ds.header_table import HeaderTable
 from pptree import print_tree
 from collections import defaultdict,Counter
 from functools import reduce
+import pyfpgrowth
 class FPTree(Tree):
 
     def __init__(self,dataframe, min_support):
         super().__init__()
         self.df = dataframe
         self.min_support = min_support
-        self.patterns = []
-        support_table = self.df.value_counts()
-        print(support_table)
-        filtered_table = {k:v for k,v in support_table.items() if v >= self.min_support}
-        filtered_table = dict(sorted(filtered_table.items(),key=lambda x:x[1], reverse=True))
-        filtered_values = list(filtered_table.keys())
-        self.avg_support = reduce(lambda x,y: int(x)+int(y),list(support_table.values()))/len(support_table)
+        # self.patterns = []
+        # support_table = self.df.value_counts()
+        # print(self.df)
+        # print(support_table)
+        # filtered_table = {k:v for k,v in support_table.items() if v >= self.min_support}
+        # filtered_table = dict(sorted(filtered_table.items(),key=lambda x:x[1], reverse=True))
+        # filtered_values = list(filtered_table.keys())
+        # self.avg_support = reduce(lambda x,y: int(x)+int(y),list(support_table.values()))/len(support_table)
         header_table = self.df.row_store
         for idx,row in enumerate(header_table):
-            new_row = list(filter(lambda x: x in filtered_values, row))
-            new_row.sort(key=lambda x: filtered_values.index(x))
-            # new_row = self.sort_row(filtered_table,row)
+            new_row = list(filter(lambda x: x is not None,row))
             header_table[idx] = new_row
-        self.header = header_table
-        self.sorted = filtered_table
-        self.conditional_pattern_base = []
-        self.header_table = HeaderTable()
-        for row in header_table:
-            row_tree = Tree()
-            head = row_tree
-            for value in row:
-                node = Tree(value,1)
-                row_tree = row_tree.addChild(node)
-            self.mergeTree(head,self.header_table)
+        self.patterns = pyfpgrowth.find_frequent_patterns(header_table,min_support)
+        # for idx,row in enumerate(header_table):
+        #     new_row = list(filter(lambda x: x in filtered_values, row))
+        #     new_row.sort(key=lambda x: filtered_values.index(x))
+        #     # new_row = self.sort_row(filtered_table,row)
+        #     header_table[idx] = new_row
+        # self.header = header_table
+        # self.sorted = filtered_table
+        # self.conditional_pattern_base = []
+        # self.header_table = HeaderTable()
+        # for row in header_table:
+        #     row_tree = Tree()
+        #     head = row_tree
+        #     for value in row:
+        #         node = Tree(value,1)
+        #         row_tree = row_tree.addChild(node)
+        #     self.mergeTree(head,self.header_table)
     # def constructHeaderTable(self,sorted):
 
 

@@ -49,15 +49,15 @@ data = Table().from_csv(sys.argv[1],separator,missing_char="")
 mem_usage = memory_usage((memory_constructor, (data, minimum_support)))
 
 
-print("Mean count of items: " + str(fptree.avg_support))
-
-fptree.performFPGrowth()
-# fptree.performFPGrowth()
-
+# print("Mean count of items: " + str(fptree.avg_support))
+#
+# # fptree.performFPGrowth()
+# # fptree.performFPGrowth()
+#
 out_file_name = sys.argv[2]
 
 file = open(out_file_name, "w+")
-
+print(len(fptree.patterns))
 for pattern in fptree.patterns:
     if flag_verbose:
         print(",".join(pattern))
